@@ -7,11 +7,8 @@ import sys
 from QA_Class import QA_CALCULATOR
 try:
 	import tkinter as tk
-	#print('Version: ',sys.version)
+
 except:
 	import Tkinter as tk
-	#print('Version: ',sys.version)
-
-
 	
 app = QA_CALCULATOR()

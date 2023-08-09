@@ -1,12 +1,12 @@
 import sys
 try:
 	import tkinter as tk
-
 except:
 	import Tkinter as tk
+import datetime
+from tkcalendar import DateEntry
 	
 class QA_CALCULATOR(tk.Tk):
-	
 
 	def __init__(self):
 		""" 
@@ -21,64 +21,93 @@ class QA_CALCULATOR(tk.Tk):
 		self.top.configure(bd = 3)
 		self.top.geometry('360x250')
 		self.top.resizable(0,0)
+			# setting menubar
+		self.menubar = tk.Menu(self.top)
+		self.top.config(menu=self.menubar)
+
 		self.Set_Vars()
+
+			#setting Frame
+		self.calculate_frame = tk.Frame( self.top, bg=self.background_color)
+		self.calculate_frame.grid(sticky='we')
+
+		self.date_frame = tk.Frame(self.top, bg = self.background_color)
+
+		
+
 		self.Set_Gatgets()
+			# setting key blinding
 		self.top.bind('<Escape>', self.Reload)
 		self.top.bind('<Return>', self.Submit)
+
 		self.top.mainloop()
 
 	def Set_Vars(self):
 				#setting vaiables 
-			self.asking_price = tk.DoubleVar()
-			self.median_price = tk.DoubleVar()
-			self.difference = tk.DoubleVar()
-			self.percentage = tk.DoubleVar()
-			self.show_percentage = tk.StringVar()
-			self.show_difference = tk.StringVar()
-			self.show_median_price = tk.StringVar()
-			self.price = []
-			self.count = 0.0
-			self.cord_x = 360
-			self.font2 = ('Time New Roman','12','italic','bold')
-			self.background_color = 'light gray'#'dodger blue'
-			self.entry_color = 'green'#'deep sky blue'
-			self.top.configure(background = self.background_color)
-			self.font = ('Comic Sans', '10')
+		self.asking_price = tk.DoubleVar()
+		self.median_price = tk.DoubleVar()
+		self.difference = tk.DoubleVar()
+		self.percentage = tk.DoubleVar()
+		self.show_percentage = tk.StringVar()
+		self.show_difference = tk.StringVar()
+		self.show_median_price = tk.StringVar()
+		self.price = []
+		self.count = 0.0
+		self.cord_x = 360
+		self.font2 = ('Time New Roman','12','italic','bold')
+		self.background_color = 'light gray'#'dodger blue'
+		self.entry_color = 'green'#'deep sky blue'
+		self.top.configure(background = self.background_color)
+		self.font = ('Comic Sans', '10')
 
-	def Set_Gatgets(self):	
+	def Set_Gatgets(self):
+				# create a menu
+		self.file_menu = tk.Menu(self.menubar)
+		
+		# add a menu item to the menu
+		self.file_menu.add_command(label='Calculate', command=self.Set_Calculate)
+		self.file_menu.add_command(label='Date', command=self.Set_Date)
+		self.file_menu.add_separator()
+		self.file_menu.add_command(label='Exit',command=self.top.destroy)
+			# add the File menu to the menubar
+		self.menubar.add_cascade(label="Options", menu=self.file_menu)
+			
 				#setting Label 
-		self.l_price = tk.Label(self.top, text = "Enter asking price", bg = self.background_color, font = self.font)
-		self.l1 = tk.Label(self.top, text = 'Enter Zillow price', bg = self.background_color, font = self.font)
-		self.l2 = tk.Label(self.top, text = 'Enter Redfin price', bg = self.background_color, font = self.font)
-		self.l3 = tk.Label(self.top, text = 'Enter Realtor price', bg = self.background_color, font = self.font)
-		self.l4 = tk.Label(self.top, text = 'Enter RealtyTrac price', bg = self.background_color, font = self.font)
-		self.l5 = tk.Label(self.top, text = 'Enter Movoto price', bg = self.background_color, font = self.font)
-				
-				# Labels for show when Submit button has been actived 
-		self.l_percentage = tk.Label(self.top, textvariable = self.show_percentage, bg = self.background_color, 
-						font = ('Time New Roman','22','italic','bold'))
-		self.l_median_price = tk.Label(self.top, textvariable = self.show_median_price, bg = self.background_color, 
-						font = self.font2)
-		self.l_difference = tk.Label(self.top, textvariable = self.show_difference, bg = self.background_color, 
-						font = self.font2)
+		self.l_price = tk.Label(self.calculate_frame, text = "Enter asking price", bg = self.background_color, font = self.font)
+		self.l1 = tk.Label(self.calculate_frame, text = 'Enter Zillow price', bg = self.background_color, font = self.font)
+		self.l2 = tk.Label(self.calculate_frame, text = 'Enter Redfin price', bg = self.background_color, font = self.font)
+		self.l3 = tk.Label(self.calculate_frame, text = 'Enter Realtor price', bg = self.background_color, font = self.font)
+		self.l4 = tk.Label(self.calculate_frame, text = 'Enter RealtyTrac price', bg = self.background_color, font = self.font)
+		self.l5 = tk.Label(self.calculate_frame, text = 'Enter Movoto price', bg = self.background_color, font = self.font)
 
-				#setting entry
-		self.e_price = tk.Entry(self.top, bg = self.entry_color, font = self.font, bd = 5)
-		#self.e_price.insert(0,0.0)
-		self.e1 = tk.Entry(self.top, bg = self.entry_color, font = self.font, bd = 5)
+			# add label for Date section
+		self.date = tk.Label(self.date_frame, text='Select a date', bg=self.background_color)
+				
+			# Labels for show when Submit button has been actived 
+		self.l_percentage = tk.Label(self.calculate_frame, textvariable = self.show_percentage, bg = self.background_color, font = ('Time New Roman','16','italic','bold'))
+		self.l_median_price = tk.Label(self.calculate_frame, textvariable = self.show_median_price, bg = self.background_color, font = self.font2)
+		self.l_difference = tk.Label(self.calculate_frame, textvariable = self.show_difference, bg = self.background_color, font = self.font2)
+
+			#setting entry
+		self.e_price = tk.Entry(self.calculate_frame, bg = self.entry_color, font = self.font, bd = 5)
+			#self.e_price.insert(0,0.0)
+		self.e1 = tk.Entry(self.calculate_frame, bg = self.entry_color, font = self.font, bd = 5)
 		self.e1.insert(0, 0.0)
-		self.e2 = tk.Entry(self.top, bg = self.entry_color, font = self.font, bd = 5)
+		self.e2 = tk.Entry(self.calculate_frame, bg = self.entry_color, font = self.font, bd = 5)
 		self.e2.insert(0, 0.0)
-		self.e3 = tk.Entry(self.top, bg = self.entry_color, font = self.font, bd = 5)
+		self.e3 = tk.Entry(self.calculate_frame, bg = self.entry_color, font = self.font, bd = 5)
 		self.e3.insert(0, 0.0)
-		self.e4 = tk.Entry(self.top, bg = self.entry_color, font = self.font, bd = 5)
+		self.e4 = tk.Entry(self.calculate_frame, bg = self.entry_color, font = self.font, bd = 5)
 		self.e4.insert(0, 0.0)
-		self.e5 = tk.Entry(self.top, bg = self.entry_color, font = self.font, bd = 5)
+		self.e5 = tk.Entry(self.calculate_frame, bg = self.entry_color, font = self.font, bd = 5)
 		self.e5.insert(0, 0.0)
 
+		# entry for date
+		self.cal = DateEntry(self.date_frame, width=12, background='darkblue', foreground='white', borderwidth=2)
+
 				# setting button
-		self.submit = tk.Button(self.top, text = 'Submit', font = self.font, command = self.Submit, bg = self.entry_color, bd = 2)
-		self.reload = tk.Button(self.top, text = 'Reload', font = self.font, command = self.Reload, bg = self.entry_color, bd = 2)		
+		self.submit = tk.Button(self.calculate_frame, text = 'Submit', font = self.font, command = self.Submit, bg = self.entry_color, bd = 2)
+		self.reload = tk.Button(self.calculate_frame, text = 'Reload', font = self.font, command = self.Reload, bg = self.entry_color, bd = 2)		
 
 			# Setting Gatget on the Screen
 		self.l_price.grid(row = 0, column = 0)
@@ -93,11 +122,15 @@ class QA_CALCULATOR(tk.Tk):
 		self.e4.grid(row = 4, column = 1)
 		self.l5.grid(row = 5, column = 0)
 		self.e5.grid(row = 5, column = 1)
+			# setting gatget Date
+		self.date.grid(row=0, column=0)
+		self.cal.grid(row=0, column=1)
+		tk.Button(self.date_frame, text='OK', command=self.Get_user_date).grid()
 
-		tk.Label(self.top,text="",bg=self.background_color).grid(row=6,column=0)
+		tk.Label(self.date_frame,text="",bg=self.background_color).grid(row=6,column=0)
 
-		self.reload.grid(row = 7, column = 0)
-		self.submit.grid(row = 7, column = 1)
+		self.reload.grid(row = 8, column = 0)
+		self.submit.grid(row = 8, column = 1)
 				# FOCUS ON ENTRY ASKING PRICE
 		self.e_price.focus()
 
@@ -114,18 +147,30 @@ class QA_CALCULATOR(tk.Tk):
 		
 		if (self.percentage.get() < 0.0):
 			self.l_percentage.configure(fg='green')
-			self.l_percentage.place(x= self.cord_x+50, y =5 )
+			#self.l_percentage.place(x= self.cord_x+50, y =5 )
+			self.l_percentage.grid(row=0, column=3)
 
 		else:
 			self.l_percentage.configure(fg='red')
-			self.l_percentage.place(x= self.cord_x+50, y = 5 )
-		self.l_median_price.place(x= self.cord_x, y = 70 )
-		self.l_difference.place(x= self.cord_x, y = 140 )
+			self.l_percentage.grid(row=1, column=3)
+			#self.l_percentage.configure(fg='red')
+
+		# self.l_median_price.place(x= self.cord_x, y = 70 )
+		self.l_median_price.grid(row=2, column=3)
+		# self.l_difference.place(x= self.cord_x, y = 140 )
+		self.l_difference.grid(row=4, column=3)
 
 
-		self.top.geometry('660x250')
+		self.top.geometry('500x250')
 
 	def Reload(self,event=None):
+
+			# set labels to empty string
+		self.show_percentage.set('')
+		self.show_median_price.set('')
+		self.show_difference.set('')
+
+
 		self.top.geometry('360x250') # change the size of the main window
 
 			# reset the main variables 
@@ -184,3 +229,19 @@ class QA_CALCULATOR(tk.Tk):
 	def Set_Difference(self): #works
 		self.difference.set(round(self.asking_price.get() - self.median_price.get(),2))
 
+	# handling menu options 
+	def Set_Calculate(self):
+		self.date_frame.grid_forget()
+		self.calculate_frame.grid(sticky='ew')
+
+	def Set_Date(self):
+		self.calculate_frame.grid_forget()
+		self.date_frame.grid(sticky='ew')
+
+	def Get_user_date(self):
+		now = datetime.date.today()
+		date = self.cal.get_date()
+		days = now - date
+		print('today: ', now)
+		print('date: ', date)
+		print('Days: ', days)
