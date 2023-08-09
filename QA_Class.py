@@ -1,17 +1,16 @@
 import sys
 try:
 	import tkinter as tk
-	print('Version: ',sys.version)
+
 except:
 	import Tkinter as tk
-	print('Version: ',sys.version)
 	
 class QA_CALCULATOR(tk.Tk):
 	
 
 	def __init__(self):
 		""" 
-      This app helps to QA_Rating's members to qualify leads
+      		This app helps to QA_Rating's members to qualify leads
 			giving the market median price, the difference between 
 			the customer's price and the market price, also 
 			helps to know the percentage of the amount 
@@ -169,12 +168,18 @@ class QA_CALCULATOR(tk.Tk):
 				 
 			if (self.price[i] != 0 and i<5):
 				self.count += 1
-		self.median_price.set(round(self.price[5] / self.count, 2))		
+		try:
+			self.median_price.set(round(self.price[5] / self.count, 2))
+		except ZeroDivisionError:
+			self.median_price.set(0.0)		
 		self.count= 0.0
 	
 	def Set_Persentage(self): #works
 		self.asking_price.set(self.e_price.get())
-		self.percentage.set(round((((self.asking_price.get()/self.median_price.get())-1)*100),2))
+		try:
+			self.percentage.set(round((((self.asking_price.get()/self.median_price.get())-1)*100),2))
+		except ZeroDivisionError:
+			self.percentage.set(0.0)
 	
 	def Set_Difference(self): #works
 		self.difference.set(round(self.asking_price.get() - self.median_price.get(),2))
