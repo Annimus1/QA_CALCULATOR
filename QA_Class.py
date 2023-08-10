@@ -40,10 +40,13 @@ class QA_CALCULATOR(tk.Tk):
 		self.top.bind('<Escape>', self.Reload)
 		self.top.bind('<Return>', self.Submit)
 
+		self.top.bind('<Control-d>', self.Set_Date)
+		self.top.bind('<Control-c>', self.Set_Calculate)
+
 		self.top.mainloop()
 
 	def Set_Vars(self):
-				#setting vaiables 
+			#setting vaiables 
 		self.asking_price = tk.DoubleVar()
 		self.median_price = tk.DoubleVar()
 		self.difference = tk.DoubleVar()
@@ -59,6 +62,8 @@ class QA_CALCULATOR(tk.Tk):
 		self.entry_color = 'green'#'deep sky blue'
 		self.top.configure(background = self.background_color)
 		self.font = ('Comic Sans', '10')
+			#setting date variables
+		self.day = tk.StringVar() 
 
 	def Set_Gatgets(self):
 				# create a menu
@@ -88,6 +93,8 @@ class QA_CALCULATOR(tk.Tk):
 		self.l_median_price = tk.Label(self.calculate_frame, textvariable = self.show_median_price, bg = self.background_color, font = self.font2)
 		self.l_difference = tk.Label(self.calculate_frame, textvariable = self.show_difference, bg = self.background_color, font = self.font2)
 
+			# Labels for show date
+		self.l_day = tk.Label(self.date_frame, textvariable=self.day, bg=self.background_color, font=self.font2)
 			#setting entry
 		self.e_price = tk.Entry(self.calculate_frame, bg = self.entry_color, font = self.font, bd = 5)
 			#self.e_price.insert(0,0.0)
@@ -123,14 +130,16 @@ class QA_CALCULATOR(tk.Tk):
 		self.l5.grid(row = 5, column = 0)
 		self.e5.grid(row = 5, column = 1)
 			# setting gatget Date
-		self.date.grid(row=0, column=0)
-		self.cal.grid(row=0, column=1)
-		tk.Button(self.date_frame, text='OK', command=self.Get_user_date).grid()
+		self.date.grid(row=1, column=0)
+		self.cal.grid(row=1, column=1)
+		self.l_day.grid(row=3, column=2)
+		tk.Button(self.date_frame, text='OK', command=self.Get_user_date).grid(row=3, column=0, columnspan=2)
+
 
 		tk.Label(self.date_frame,text="",bg=self.background_color).grid(row=6,column=0)
 
-		self.reload.grid(row = 8, column = 0)
-		self.submit.grid(row = 8, column = 1)
+		self.reload.grid(row = 9, column = 0)
+		self.submit.grid(row = 9, column = 1)
 				# FOCUS ON ENTRY ASKING PRICE
 		self.e_price.focus()
 
@@ -147,18 +156,16 @@ class QA_CALCULATOR(tk.Tk):
 		
 		if (self.percentage.get() < 0.0):
 			self.l_percentage.configure(fg='green')
-			#self.l_percentage.place(x= self.cord_x+50, y =5 )
-			self.l_percentage.grid(row=0, column=3)
+			self.l_percentage.grid(row=1, column=3)
 
 		else:
 			self.l_percentage.configure(fg='red')
 			self.l_percentage.grid(row=1, column=3)
-			#self.l_percentage.configure(fg='red')
 
 		# self.l_median_price.place(x= self.cord_x, y = 70 )
 		self.l_median_price.grid(row=2, column=3)
 		# self.l_difference.place(x= self.cord_x, y = 140 )
-		self.l_difference.grid(row=4, column=3)
+		self.l_difference.grid(row=3, column=3)
 
 
 		self.top.geometry('500x250')
@@ -230,11 +237,11 @@ class QA_CALCULATOR(tk.Tk):
 		self.difference.set(round(self.asking_price.get() - self.median_price.get(),2))
 
 	# handling menu options 
-	def Set_Calculate(self):
+	def Set_Calculate(self, event=None):
 		self.date_frame.grid_forget()
 		self.calculate_frame.grid(sticky='ew')
 
-	def Set_Date(self):
+	def Set_Date(self, event=None):
 		self.calculate_frame.grid_forget()
 		self.date_frame.grid(sticky='ew')
 
@@ -242,6 +249,22 @@ class QA_CALCULATOR(tk.Tk):
 		now = datetime.date.today()
 		date = self.cal.get_date()
 		days = now - date
-		print('today: ', now)
-		print('date: ', date)
-		print('Days: ', days)
+		result = self.get_days(date, now)
+		self.day.set('{} years, {} months'.format(result['year'], result['month']))
+
+	def get_days(self,fecha1, fecha2):
+		""" Convert days in it's representation in years and months"""
+		formato = "%d-%m-%Y"  
+		fecha_objeto1 = fecha1 #.strptime(fecha1, formato)
+		fecha_objeto2 = fecha2 # datetime.strptime(fecha2, formato)
+
+		diferencia = fecha_objeto2 - fecha_objeto1
+		dias = diferencia.days
+
+		annos_completos = dias // 365
+		residuo_annos = dias % 365
+
+		meses_completos = residuo_annos // 30
+		residuo_meses = residuo_annos % 30
+
+		return {'year':annos_completos, 'month':meses_completos, 'days':residuo_meses}
