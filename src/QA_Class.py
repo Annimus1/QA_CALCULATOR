@@ -8,6 +8,10 @@ from tkcalendar import DateEntry
 	
 class QA_CALCULATOR(tk.Tk):
 
+	# size of the screen (width x height)
+	init_window_size = '360x250'
+	maximized_window = '600x250'
+
 	def __init__(self):
 		""" 
       		This app helps to QA_Rating's members to qualify leads
@@ -19,7 +23,7 @@ class QA_CALCULATOR(tk.Tk):
 		self.top = tk.Tk()
 		self.top.title('QA CALCULATOR')
 		self.top.configure(bd = 3)
-		self.top.geometry('360x250')
+		self.top.geometry(self.init_window_size)
 		self.top.resizable(0,0)
 			# setting menubar
 		self.menubar = tk.Menu(self.top)
@@ -168,7 +172,7 @@ class QA_CALCULATOR(tk.Tk):
 		self.l_difference.grid(row=3, column=3)
 
 
-		self.top.geometry('500x250')
+		self.top.geometry(self.maximized_window)
 
 	def Reload(self,event=None):
 
@@ -178,7 +182,7 @@ class QA_CALCULATOR(tk.Tk):
 		self.show_difference.set('')
 
 
-		self.top.geometry('360x250') # change the size of the main window
+		self.top.geometry(self.init_window_size) # change the size of the main window
 
 			# reset the main variables 
 		self.percentage.set(0.0)
